@@ -16,10 +16,21 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from bookmarkz_app.views import *
+from bookmarkz.views import *
 from django.contrib.auth import views as auth_views
+import os
 
+#pathname manipulation
+site_media = os.path.join(
+  os.path.dirname(__file__), 'site_media'
+)
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', main_page, name='main_page'),
     url(r'^user/(\w+)/$', user_page, name='user_page'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name = 'login'),
+    url(r'^logout/$', logout_page, name = 'logout'),
+    url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
+      { 'document_root': site_media }),
+    url(r'^register/$', register, name = 'register'),
 ]

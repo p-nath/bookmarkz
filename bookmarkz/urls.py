@@ -22,15 +22,24 @@ import os
 
 #pathname manipulation
 site_media = os.path.join(
-  os.path.dirname(__file__), 'site_media'
+  os.path.dirname(__file__),'../', 'site_media'
 )
+
+#path is bookmarkz/bookmarkz
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
+     { 'document_root': site_media }),
+    # Browsing
     url(r'^$', main_page, name='main_page'),
     url(r'^user/(\w+)/$', user_page, name='user_page'),
-    url(r'^login/$', 'django.contrib.auth.views.login', name = 'login'),
-    url(r'^logout/$', logout_page, name = 'logout'),
-    url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
-      { 'document_root': site_media }),
-    url(r'^register/$', register, name = 'register'),
+    #url(r'^tag/([^\s]+)/$', tag_page, name='tag_page'),
+    url(r'^tag/$', tag_cloud_page),
+    # Session management
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^logout/$', logout_page, name='logout'),
+    url(r'^register/$', register, name='register'),
+    # Account management
+    url(r'^save/$', bookmark_save_page, name='bookmark_save'),
 ]

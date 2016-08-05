@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^user/(\w+)/$', user_page, name='user_page'),
     #url(r'^tag/([^\s]+)/$', tag_page, name='tag_page'),
     url(r'^tag/$', tag_cloud_page),
+    url(r'^search/$', search_page),
     # Session management
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),

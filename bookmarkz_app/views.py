@@ -21,7 +21,8 @@ def user_page(request, username):
   variables = RequestContext(request, {
     'username': username,
     'bookmarks': bookmarks,
-    'show_tags': True
+    'show_tags': True,
+    'show_edit': username == request.user.username,
   })
   return render_to_response('user_page.html', variables)
  
@@ -72,10 +73,15 @@ def search_page(request):
       form = SearchForm({'query' : query})
       bookmarks = \
         Bookmark.objects.filter (title__icontains=query)[:10]
-  variables = RequestContext(request, { 'form': form,
+  variables = RequestContext(request, {
+    'form': form,
     'bookmarks': bookmarks,
     'show_results': show_results,
     'show_tags': True,
     'show_user': True
   })
-  return render_to_response('search.html', variables)
+  if request.GET.has_key('ajax'):
+    return render_to_response('bookmark_list.html', variables)
+  else:
+    return render_to_response('search.html', variables)
+

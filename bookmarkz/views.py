@@ -1,5 +1,7 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
+from django.views.decorators.csrf import ensure_csrf_cookie
+
 from forms import *
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -30,7 +32,7 @@ def register(request):
     variables
   )
 
-def _bookmark_save(request):
+def _bookmark_save(request, form):
   # Create or get link. (link = actual link, dummy = bool flag)
   link, dummy = Link.objects.get_or_create(
     url=form.cleaned_data['url']

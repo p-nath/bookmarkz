@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from bookmarkz_app.views import *
-from bookmarkz.views import *
+from django.views.static import serve
 from django.contrib.auth import views as auth_views
+from bookmarkz import views
 import os
 
 #pathname manipulation
@@ -28,19 +28,19 @@ site_media = os.path.join(
 #path is bookmarkz/bookmarkz
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
+    url(r'^site_media/(?P<path>.*)$', serve,
      { 'document_root': site_media }),
     # Browsing
-    url(r'^$', main_page, name='main_page'),
-    url(r'^user/(\w+)/$', user_page, name='user_page'),
+    url(r'^$', views.main_page, name='main_page'),
+    url(r'^user/(\w+)/$', views.user_page, name='user_page'),
     #url(r'^tag/([^\s]+)/$', tag_page, name='tag_page'),
-    url(r'^tag/$', tag_cloud_page),
-    url(r'^search/$', search_page),
+    url(r'^tag/$', views.tag_cloud_page),
+    url(r'^search/$', views.search_page),
     # Session management
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^logout/$', logout_page, name='logout'),
-    url(r'^register/$', register, name='register'),
+    url(r'^accounts/login/$', auth_views.login ),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', views.logout_page, name='logout'),
+    url(r'^register/$', views.register, name='register'),
     # Account management
-    url(r'^save/$', bookmark_save_page, name='bookmark_save'),
+    url(r'^save/$', views.bookmark_save_page, name='bookmark_save'),
 ]

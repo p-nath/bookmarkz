@@ -29,7 +29,7 @@ def register(request):
   })
   return render_to_response(
     'registration/register.html',
-    variables
+    variables,
   )
 
 def _bookmark_save(request, form):

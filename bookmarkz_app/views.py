@@ -1,41 +1,43 @@
 from django.shortcuts import render
-from django.template import Context
+'''from django.template import Context
 from django.template.loader import get_template
 from django.http import HttpResponse, Http404
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template import RequestContext'''
 from models import *
 from forms import *
 from django.shortcuts import get_object_or_404
 
 def main_page(request):
-  return render_to_response(
-    'main_page.html', RequestContext(request)
+  return render(
+    request,
+    '../templates/main_page.html'
   )
 
 def user_page(request, username):
   user = get_object_or_404(User, username=username)
   bookmarks = user.bookmark_set.order_by('-id')
   bookmarks = user.bookmark_set.all()
-  variables = RequestContext(request, {
+  return render(
+    request,
+    '../templates/user_page.html', {
     'username': username,
     'bookmarks': bookmarks,
     'show_tags': True,
     'show_edit': username == request.user.username,
   })
-  return render_to_response('user_page.html', variables)
  
 def tag_page(request, tag_name):
   tag = get_object_or_404(Tag, name=tag_name)
   bookmarks = tag.bookmarks.order_by('-id')
-  variables = RequestContext(request, {
+  return render(
+    request,
+    '../templates/tag_page.html', {
     'bookmarks': bookmarks,
     'tag_name': tag_name,
     'show_tags': True,
     'show_user': True
   })
-  return render_to_response('tag_page.html', variables)
 
 def tag_cloud_page(request):
   MAX_WEIGHT = 5
@@ -57,10 +59,11 @@ def tag_cloud_page(request):
     tag.weight = int(
       MAX_WEIGHT * (tag.count - min_count) / count_range
     )
-  variables = RequestContext(request, {
+  return render(
+    request,
+    '../templates/tag_cloud_page.html', {
     'tags': tags
   })
-  return render_to_response('tag_cloud_page.html', variables)
 
 def search_page(request):
   form = SearchForm()
@@ -73,15 +76,25 @@ def search_page(request):
       form = SearchForm({'query' : query})
       bookmarks = \
         Bookmark.objects.filter (title__icontains=query)[:10]
-  variables = RequestContext(request, {
+  if request.GET.has_key('ajax'):
+    return render(
+    request,
+    '../templates/bookmark_list.html', {
     'form': form,
     'bookmarks': bookmarks,
     'show_results': show_results,
     'show_tags': True,
     'show_user': True
   })
-  if request.GET.has_key('ajax'):
-    return render_to_response('bookmark_list.html', variables)
   else:
-    return render_to_response('search.html', variables)
+    return render(
+    request,
+    '../templates/search.html',
+    {
+    'form': form,
+    'bookmarks': bookmarks,
+    'show_results': show_results,
+    'show_tags': True,
+    'show_user': True
+  })
 

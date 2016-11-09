@@ -1,12 +1,12 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import logout
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
 
 from forms import *
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+#from django.template import RequestContext
+from django.shortcuts import render
 from bookmarkz_app.models import *
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
 
 def logout_page(request):
   logout(request)
@@ -24,12 +24,10 @@ def register(request):
       return HttpResponseRedirect('/')
   else:
     form = RegistrationForm()
-  variables = RequestContext(request, {
-    'form': form
-  })
-  return render_to_response(
-    'registration/register.html',
-    variables,
+  return render(
+    request,
+    '../templates/registration/register.html',
+    {'form' : form,}
   )
 
 def _bookmark_save(request, form):
@@ -56,20 +54,22 @@ def _bookmark_save(request, form):
   bookmark.save()
   return bookmark
 
-@login_required
+@csrf_exempt
 def bookmark_save_page(request):
   ajax = request.GET.has_key('ajax')
   if request.method == 'POST':
     form = BookmarkSaveForm(request.POST)
     if form.is_valid():
-      bookmark = _bookmark_save(form)
+      bookmark = _bookmark_save(request, form)
       if ajax:
-        variables = RequestContext(request, {
+        return render(
+          request,
+          '../templates/bookmark_list.html',
+        {
           'bookmarks': [bookmark],
           'show_edit': True,
           'show_tags': True
         })
-        return render_to_response('bookmark_list.html', variables)
       else:
         return HttpResponseRedirect(
           '/user/%s/' % request.user.username
@@ -95,16 +95,15 @@ def bookmark_save_page(request):
     })
   else:
     form = BookmarkSaveForm()
-  variables = RequestContext(request, {
-    'form': form
-  })
   if ajax:
-    return render_to_response(
-      'bookmark_save_form.html',
-      variables
+    return render(
+      request,
+      '../templates/bookmark_save_form.html',
+      {'form' : form,}
     )
   else:
-    return render_to_response(
-      'bookmark_save.html',
-      variables
+    return render(
+      request,
+      '../templates/bookmark_save.html',
+      {'form' : form,}
     )

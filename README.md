@@ -1,7 +1,7 @@
 # bookmarkz
 A social bookmarking application using Django framework.
 
-#Install/Upgrade Django
+###Install/Upgrade Django
 ```
 pip install django
 pip install --upgrade django

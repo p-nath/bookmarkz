@@ -1,12 +1,13 @@
-from django.http import HttpResponseRedirect, HttpResponse
+
+from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 
 from forms import *
-#from django.template import RequestContext
 from django.shortcuts import render
 from bookmarkz_app.models import *
-#from django.contrib.auth.decorators import login_required
 
 def logout_page(request):
   logout(request)
@@ -50,6 +51,14 @@ def _bookmark_save(request, form):
   for tag_name in tag_names:
     tag, dummy = Tag.objects.get_or_create(name=tag_name)
     bookmark.tag_set.add(tag)
+  # Share on mainpage if requested
+  if form.cleaned_data['share']:
+    shared_bookmark, created = SharedBookmark.objects.get_or_create(
+      bookmark = bookmark
+    )
+    if created:
+      shared_bookmark.users_voted.add(request.user)
+      shared_bookmark.save()
   # Save bookmark to database and return it.
   bookmark.save()
   return bookmark
@@ -107,3 +116,37 @@ def bookmark_save_page(request):
       '../templates/bookmark_save.html',
       {'form' : form,}
     )
+
+@login_required
+def bookmark_vote_page(request):
+  if request.GET.has_key('id'):
+    try:
+      id = request.GET['id']
+      shared_bookmark = SharedBookmark.objects.get(id=id)
+      user_voted = shared_bookmark.users_voted.filter(
+        username=request.user.username
+      )
+      if not user_voted:
+        shared_bookmark.votes += 1
+        shared_bookmark.users_voted.add(request.user)
+        shared_bookmark.save()
+    except ObjectDoesNotExist:
+      raise Http404('Bookmark not found.')
+  if request.META.has_key('HTTP_REFERER'):
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+  return HttpResponseRedirect('/')
+
+def popular_page(request):
+  today = datetime.today()
+  yesterday = today - timedelta(1)
+  shared_bookmarks = SharedBookmark.objects.filter(
+    date__gt=yesterday
+  )
+  #__gt means greater than
+  shared_bookmarks = shared_bookmarks.order_by(
+    '-votes'
+  )[:10]
+  return render(request,
+     '../templates/popular_page.html', {
+    'shared_bookmarks': shared_bookmarks
+  })

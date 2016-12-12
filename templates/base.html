@@ -13,6 +13,8 @@
   <body>
     <div id="nav">
       <a href="/">home</a> |
+      <a href="/tag/">tag</a> |
+      <a href="/popular/">popular</a> |
       {% if user.is_authenticated %}
         <a href="/save/">add bookmark</a> |
         <a href="/user/{{ user.username }}/">

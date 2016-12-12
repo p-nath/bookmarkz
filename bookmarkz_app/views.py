@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 '''from django.template import Context
 from django.template.loader import get_template
@@ -9,10 +10,14 @@ from forms import *
 from django.shortcuts import get_object_or_404
 
 def main_page(request):
+  shared_bookmarks = SharedBookmark.objects.order_by(
+    '-date'
+  )[:10]
   return render(
     request,
-    '../templates/main_page.html'
-  )
+    '../templates/main_page.html',{
+    'shared_bookmarks': shared_bookmarks
+  })
 
 def user_page(request, username):
   user = get_object_or_404(User, username=username)
@@ -97,4 +102,3 @@ def search_page(request):
     'show_tags': True,
     'show_user': True
   })
-

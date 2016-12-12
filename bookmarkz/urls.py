@@ -41,6 +41,7 @@ urlpatterns = [
     #url(r'^tag/([^\s]+)/$', tag_page, name='tag_page'),
     url(r'^tag/$', bookmarkz_app_views.tag_cloud_page),
     url(r'^search/$', bookmarkz_app_views.search_page),
+    url(r'^popular/$', bookmarkz_views.popular_page),
     # Session management
     url(r'^accounts/login/$', auth_views.login ),
     url(r'^login/$', auth_views.login, name='login'),
@@ -48,4 +49,5 @@ urlpatterns = [
     url(r'^register/$', bookmarkz_views.register, name='register'),
     # Account management
     url(r'^save/$', bookmarkz_views.bookmark_save_page, name='bookmark_save'),
+    url(r'^vote/$', bookmarkz_views.bookmark_vote_page, name="bookmark_vote"),
 ]

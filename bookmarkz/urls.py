@@ -24,30 +24,38 @@ from django.views.static import serve
 from django.contrib.auth import views as auth_views
 from bookmarkz import views as bookmarkz_views
 from bookmarkz_app import views as bookmarkz_app_views
+from bookmarkz_app.feeds import RecentBookmarks, UserBookmarks
 
 #pathname manipulation
 site_media = os.path.join(
   os.path.dirname(__file__),'..', 'site_media'
 )
 
+
 #path is bookmarkz/bookmarkz
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^site_media/(?P<path>.*)$', serve,
      { 'document_root': site_media }),
+
     # Browsing
     url(r'^$', bookmarkz_app_views.main_page, name='main_page'),
     url(r'^user/(\w+)/$', bookmarkz_app_views.user_page, name='user_page'),
-    #url(r'^tag/([^\s]+)/$', tag_page, name='tag_page'),
     url(r'^tag/$', bookmarkz_app_views.tag_cloud_page),
     url(r'^search/$', bookmarkz_app_views.search_page),
     url(r'^popular/$', bookmarkz_views.popular_page),
+
     # Session management
     url(r'^accounts/login/$', auth_views.login ),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', bookmarkz_views.logout_page, name='logout'),
     url(r'^register/$', bookmarkz_views.register, name='register'),
+
     # Account management
     url(r'^save/$', bookmarkz_views.bookmark_save_page, name='bookmark_save'),
     url(r'^vote/$', bookmarkz_views.bookmark_vote_page, name="bookmark_vote"),
+
+    # Feeds
+    url(r'^feeds/recent/$', RecentBookmarks()),
+    url(r'^feeds/user/(?P<username>\w+)/$', UserBookmarks()),
 ]

@@ -139,9 +139,7 @@ def bookmark_vote_page(request):
 def popular_page(request):
   today = datetime.today()
   yesterday = today - timedelta(1)
-  shared_bookmarks = SharedBookmark.objects.filter(
-    date__gt=yesterday
-  )
+  shared_bookmarks = SharedBookmark.objects
   #__gt means greater than
   shared_bookmarks = shared_bookmarks.order_by(
     '-votes'

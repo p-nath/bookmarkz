@@ -19,7 +19,6 @@ class Bookmark(models.Model):
   def get_absolute_url(self):
     return self.link.url
 
-
 class Tag(models.Model):
   name = models.CharField(max_length=64, unique=True)
   bookmarks = models.ManyToManyField(Bookmark)
@@ -33,3 +32,15 @@ class SharedBookmark(models.Model):
   users_voted = models.ManyToManyField(User)
   def __str__(self):
     return '%s, %s'%self.bookmarks, self.votes
+
+class Friendship(models.Model):
+  from_friend = models.ForeignKey(
+    User, related_name='friend_set'
+  )
+  to_friend = models.ForeignKey(
+    User, related_name='to_friend_set'
+  )
+  def __str__(self):
+    return '%s, %s'%(self.from_friend.username, self.to_friend.username)
+  class Meta:
+    unique_together = (('to_friend', 'from_friend'),)

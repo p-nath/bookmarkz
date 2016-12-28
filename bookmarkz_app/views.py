@@ -1,12 +1,9 @@
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
-'''from django.template import Context
-from django.template.loader import get_template
-from django.http import HttpResponse, Http404
-from django.contrib.auth.models import User
-from django.template import RequestContext'''
 from models import *
 from forms import *
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 
 def main_page(request):
@@ -21,15 +18,22 @@ def main_page(request):
 
 def user_page(request, username):
   user = get_object_or_404(User, username=username)
-  bookmarks = user.bookmark_set.order_by('-id')
+  #bookmarks= user.bookmark_set.order_by('-id')
   bookmarks = user.bookmark_set.all()
+  is_friend = Friendship.objects.filter(
+    from_friend=request.user,
+    to_friend=user
+  )
   return render(
     request,
     '../templates/user_page.html', {
-    'username': username,
-    'bookmarks': bookmarks,
-    'show_tags': True,
-    'show_edit': username == request.user.username,
+      'username': username,
+      'bookmarks': bookmarks,
+      'show_tags': True,
+      'show_edit': username == request.user.username,
+      'show_paginator': False,
+      'is_friend': is_friend,
+
   })
  
 def tag_page(request, tag_name):
@@ -102,3 +106,36 @@ def search_page(request):
     'show_tags': True,
     'show_user': True
   })
+
+def friends_page(request, username):
+  user = get_object_or_404(User, username=username)
+  friends = \
+    [friendship.to_friend for friendship in user.friend_set.all()]
+  friend_bookmarks = \
+    Bookmark.objects.filter(user__in=friends).order_by('id')
+  return render(
+    request,
+    '../templates/friends_page.html',
+    {
+    'username' : username,
+    'friends' : friends,
+    'bookmarks' : friend_bookmarks[:10],
+    'show_tags' : True,
+    'show_user' : True
+  })
+
+@login_required
+def friend_add(request):
+  if request.GET.has_key('username'):
+    friend = \
+      get_object_or_404(User, username=request.GET['username'])
+    friendship = Friendship(
+      from_friend=request.user,
+      to_friend=friend
+    )
+    friendship.save()
+    return HttpResponseRedirect(
+      '/friends/%s/' %request.user.username
+    )
+  else:
+    return Http404

@@ -18,3 +18,5 @@ python manage.py runserver (ip_address)
 ``` 
 python manage.py migrate
 ```
+
+NB - The RSS feeds are not supported by Chrome

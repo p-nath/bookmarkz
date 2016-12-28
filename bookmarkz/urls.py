@@ -38,6 +38,10 @@ urlpatterns = [
     url(r'^site_media/(?P<path>.*)$', serve,
      { 'document_root': site_media }),
 
+    #Friends
+    url(r'^friends/(\w+)/$',bookmarkz_app_views.friends_page),
+    url(r'^friend/add/$', bookmarkz_app_views.friend_add),
+
     # Browsing
     url(r'^$', bookmarkz_app_views.main_page, name='main_page'),
     url(r'^user/(\w+)/$', bookmarkz_app_views.user_page, name='user_page'),

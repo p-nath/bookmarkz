@@ -2,9 +2,11 @@ import re
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django import forms
+from django.utils.translation import gettext_lazy as _
+
 
 class RegistrationForm(forms.Form):
-  username = forms.CharField(label='Username', max_length=30)
+  username = forms.CharField(label=_('Username'), max_length=30)
   email = forms.EmailField(label='Email')
   password = forms.CharField(
     label='Password',

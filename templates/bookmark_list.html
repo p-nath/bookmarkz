@@ -12,14 +12,10 @@
     {% if show_tags %}
       Tags:
       {% if bookmark.tag_set.all %}
-      <ul class="tags">
         {% for tag in bookmark.tag_set.all %}
-          <li>
             <a href="/tag/{{ tag.name|urlencode }}/">
-              {{ tag.name|escape }}</a>
-          </li>
+              {{ tag.name}} </a>&nbsp
         {% endfor %}
-      </ul>
       {% else %}
         None.
       {% endif %}
@@ -31,20 +27,20 @@
       class="username">
       {{ bookmark.user.username }}</a>
     {% endif %}
+    <br>
     </li>
   {% endfor %}
   </ul>
-    {% if show_paginator %}
-        <div class="paginator">
-            {% if has_prev %}
-                <a href="?page={{ prev_page }}">&laquo; Previous</a>
+    <div class="pagination">
+        <span class="step-links">
+            {% if bookmarks.has_previous %}
+                <a href="?page={{ bookmarks.previous_page_number }}">previous</a>
             {% endif %}
-            {% if has_next %}
-                <a href="?page={{ next_page }}">Next &raquo;</a>
+            {% if bookmarks.has_next %}
+                <a href="?page={{ bookmarks.next_page_number }}">next</a>
             {% endif %}
-            (Page {{ page }} of {{ pages }}
-        </div>
-    {% endif %}
+        </span>
+    </div>
 {% else %}
   <p>No bookmarks found.</p>
 {% endif %}

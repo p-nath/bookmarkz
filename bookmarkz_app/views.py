@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from models import *
 from forms import *
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import get_object_or_404
 
 def main_page(request):
@@ -19,7 +19,15 @@ def main_page(request):
 def user_page(request, username):
   user = get_object_or_404(User, username=username)
   #bookmarks= user.bookmark_set.order_by('-id')
-  bookmarks = user.bookmark_set.all()
+  bookmarks_set = user.bookmark_set.all()
+  paginator = Paginator(bookmarks_set, 5)
+  page = request.GET.get('page')
+  try:
+    bookmarks = paginator.page(page)
+  except PageNotAnInteger:
+    bookmarks = paginator.page(1)
+  except EmptyPage:
+    bookmarks = paginator.page(paginator.num_pages)
   is_friend = Friendship.objects.filter(
     from_friend=request.user,
     to_friend=user
@@ -106,6 +114,7 @@ def search_page(request):
     'show_tags': True,
     'show_user': True
   })
+
 
 def friends_page(request, username):
   user = get_object_or_404(User, username=username)

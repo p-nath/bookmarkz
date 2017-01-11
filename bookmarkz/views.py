@@ -1,6 +1,7 @@
 
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
+import json
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
@@ -148,3 +149,19 @@ def popular_page(request):
      '../templates/popular_page.html', {
     'shared_bookmarks': shared_bookmarks
   })
+
+#Autocomplete
+def tag_autocomplete(request):
+  if request.is_ajax():
+    q = request.GET.get('term', '')
+    tags = Tag.objects.filter(name__istartswith=q)[:10]
+    i = 1
+    results = []
+    for tag in tags:
+      tag_json = {}
+      tag_json['id'] = i
+      tag_json['label'] = tag.name
+      tag_json['value'] = tag.name
+      i += 1
+      results.append(tag_json)
+    return HttpResponse(json.dumps(results), 'application/json')

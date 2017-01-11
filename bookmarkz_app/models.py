@@ -44,3 +44,4 @@ class Friendship(models.Model):
     return '%s, %s'%(self.from_friend.username, self.to_friend.username)
   class Meta:
     unique_together = (('to_friend', 'from_friend'),)
+

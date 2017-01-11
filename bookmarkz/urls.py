@@ -38,6 +38,9 @@ urlpatterns = [
     url(r'^site_media/(?P<path>.*)$', serve,
      { 'document_root': site_media }),
 
+    #Autocomplete
+    url(r'^api/tag_autocomplete/$', bookmarkz_views.tag_autocomplete),
+
     #Friends
     url(r'^friends/(\w+)/$',bookmarkz_app_views.friends_page),
     url(r'^friend/add/$', bookmarkz_app_views.friend_add),

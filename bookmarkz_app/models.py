@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 class Link(models.Model):
   url = models.URLField(unique=True)
@@ -44,4 +46,3 @@ class Friendship(models.Model):
     return '%s, %s'%(self.from_friend.username, self.to_friend.username)
   class Meta:
     unique_together = (('to_friend', 'from_friend'),)
-

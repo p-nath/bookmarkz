@@ -1,0 +1,16 @@
+bcrypt==3.1.0
+cffi==1.7.0
+dj-database-url==0.4.2
+Django==1.10.3
+gunicorn==19.7.0
+meld==3.14.2
+numpy==1.11.0
+psycopg2==2.7
+pycparser==2.14
+pygobject==3.20.1
+scikit-learn==0.17.1
+scipy==0.17.1
+six==1.10.0
+sklearn==0.0
+vboxapi==1.0
+virtualenv==15.1.0

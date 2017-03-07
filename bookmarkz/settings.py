@@ -24,7 +24,8 @@ SECRET_KEY = '(bz6eme2a0gj$zx20k7#8$#3m&wii-148)g!jseflf-@4819xq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [u'agile-brook-45378.herokuapp.com',]
+ALLOWED_HOSTS = [u'agile-brook-45378.herokuapp.com',
+                 u'127.0.0.1',]
 
 
 # Application definition
@@ -78,14 +79,14 @@ WSGI_APPLICATION = 'bookmarkz.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bookmarkzdb',
+        #'NAME': 'bookmarkzdb',
         #'USER': '',
         #'PASSWORD': '',
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+#db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'] = dj_database_url.config()
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

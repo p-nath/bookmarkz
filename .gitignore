@@ -4,3 +4,5 @@ bookmarkzdb
 venv
 .env
 staticfiles
+site_media/admin/*
+site_media/staticfiles.json

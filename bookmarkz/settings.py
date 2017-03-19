@@ -81,6 +81,7 @@ DATABASES = {
         'NAME': 'bookmarkzdb',
     }
 }
+DATABASES = {'default': dj_database_url.config()}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
